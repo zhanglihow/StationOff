@@ -79,11 +79,12 @@ class LocationAudioService : Service() {
         fun shakeAndNotice()
     }
 
-    fun myStartForeground() {
-        startForeground(MainActivity.LOCATION_NOTI_ID, LocationNotification.buildNotification(mContext))
+    fun myStartForeground(context:Context) {
+        startForeground(MainActivity.LOCATION_NOTI_ID, LocationNotification.buildNotification(context))
     }
 
     override fun onBind(intent: Intent): IBinder? {
+        Logger.e("onBind")
         return mBinder
     }
 
@@ -268,8 +269,8 @@ class LocationAudioService : Service() {
     inner class ServiceBinder : Binder(), BusStationSearch.OnBusStationSearchListener, DistanceSearch.OnDistanceSearchListener,
             AMapLocationListener, AudioRecorder.RecorderListen {
 
-        fun startForeground() {
-            myStartForeground()
+        fun startForeground(context:Context) {
+            myStartForeground(context)
         }
 
         fun setListener(listener: ServiceListener) {

@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity(), MainView, LocationAudioService.Service
         const val LOCATION_NOTI_ID = 11
         const val SERVICE_FOREGROUND_ID = 12
     }
-
     private val mPresenter: MainPresenter by lazy {
         MainPresenter(this)
     }
@@ -45,15 +44,6 @@ class MainActivity : AppCompatActivity(), MainView, LocationAudioService.Service
     }
     //权限是否给完
     private var isPermissionOk = true
-    //震动
-    private val vibrator: Vibrator by lazy {
-        getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-    }
-    //通知
-    private val manager: NotificationManager by lazy {
-        getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-    }
-    private lateinit var notification: Notification
 
     private var mServiceBinder: LocationAudioService.ServiceBinder? = null
 
@@ -66,7 +56,7 @@ class MainActivity : AppCompatActivity(), MainView, LocationAudioService.Service
             // 设置讯飞参数
             mServiceBinder!!.setParam(this@MainActivity)
             //设置为前台
-            mServiceBinder!!.startForeground()
+            mServiceBinder!!.startForeground(this@MainActivity)
             //初始化定位
             mServiceBinder!!.initLocation()
             //舒适化录音
@@ -85,14 +75,15 @@ class MainActivity : AppCompatActivity(), MainView, LocationAudioService.Service
         getPermissions()
 
         initView()
-        initNotification()
+        mPresenter.initNotification(this)
 
         //使用服务进行定位和录音
         serviceIntent = Intent(this@MainActivity, LocationAudioService::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(serviceIntent)
+            Logger.e("startForegroundService")
         }
-        bindService(intent, mConnection, BIND_AUTO_CREATE)
+        bindService(serviceIntent, mConnection, BIND_AUTO_CREATE)
     }
 
     /**
@@ -129,8 +120,7 @@ class MainActivity : AppCompatActivity(), MainView, LocationAudioService.Service
             if (isStationOff) {
                 isStationOff = false
                 changView()
-                vibrator.cancel()
-                manager.cancel(AUDIO_NOTI_ID)
+                mPresenter.showStop()
                 mServiceBinder!!.cancelLocationNotifi()
                 tv_location.visibility = View.GONE
                 return@setOnClickListener
@@ -149,7 +139,7 @@ class MainActivity : AppCompatActivity(), MainView, LocationAudioService.Service
                 mServiceBinder!!.stationPy(edit_station.text.toString())
                 mServiceBinder!!.startLocation()
                 //设置为前台
-                mServiceBinder!!.startForeground()
+                mServiceBinder!!.startForeground(this@MainActivity)
             } else {
                 tv_content.text = "停止"
                 mServiceBinder!!.stopAll()
@@ -157,34 +147,6 @@ class MainActivity : AppCompatActivity(), MainView, LocationAudioService.Service
             tv_location.visibility = View.GONE
             changView()
         }
-    }
-
-    /**
-     * 初始化notifi
-     */
-    @SuppressLint("WrongConstant")
-    private fun initNotification() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelId = "StationOff"
-            val channelName = "到站啦"
-            val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
-            channel.setBypassDnd(true)//设置可绕过  请勿打扰模式
-            manager.createNotificationChannel(channel)
-        }
-        val intent = Intent(this, MainActivity::class.java)
-        val pIntent = PendingIntent.getActivity(this, 1, intent, 0)
-
-        notification = NotificationCompat.Builder(this, "StationOff")
-                .setContentTitle("到站啦")
-                .setContentText("到站啦，准备下车吧！")
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
-                .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
-                .setAutoCancel(true)
-                .setContentIntent(pIntent)
-                .setFullScreenIntent(pIntent, true)
-                .build()
     }
 
     private fun show(str: String) {
@@ -243,17 +205,8 @@ class MainActivity : AppCompatActivity(), MainView, LocationAudioService.Service
      * 开启震动
      */
     override fun shakeAndNotice() {
-        manager.notify(AUDIO_NOTI_ID, notification)
-        // 判断手机硬件是否有振动器
-        if (vibrator.hasVibrator()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val audioAttributes = AudioAttributes.Builder().setFlags(AudioAttributes.USAGE_GAME).build()
-                val vibrationEffect = VibrationEffect.createWaveform(longArrayOf(1000, 1000), 0)
-                vibrator.vibrate(vibrationEffect, audioAttributes)
-            } else {
-                vibrator.vibrate(longArrayOf(1000, 1000), 0)
-            }
-        }
+        mPresenter.showNotification()
+        mPresenter.startShake()
     }
 
     //重写返回键
