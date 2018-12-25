@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">到站提醒</string>
+    <string name="station_name">请输入站名</string>
+    <string name="bus_voice_station">(公交车或者地铁语音播报的站名)</string>
+    <string name="station">站名</string>
+    <string name="start">开启</string>
+    <string name="listen">监听中</string>
+    <string name="location_str">您已进入离站点的%s米范围内</string>
+    <!--<string name="stop">监听中</string>-->
+</resources>

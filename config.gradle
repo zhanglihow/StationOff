@@ -1,0 +1,31 @@
+ext {
+    android = [
+            compileSdkVersion: 28,
+            buildToolsVersion: "28.0.3",
+            minSdkVersion    : 19,
+            targetSdkVersion : 28,
+            versionCode      : 1,
+            versionName      : "1.0",
+    ]
+
+    version = [
+            androidSupportSdkVersion: "28.0.0",
+            rxlifecycle2SdkVersion  : "2.2.1",
+    ]
+    dependencies = [
+            //support
+            "appcompat-v7"          : "com.android.support:appcompat-v7:${version["androidSupportSdkVersion"]}",
+            "design"                : "com.android.support:design:${version["androidSupportSdkVersion"]}",
+            "support-v4"            : "com.android.support:support-v4:${version["androidSupportSdkVersion"]}",
+            "annotations"           : "com.android.support:support-annotations:${version["androidSupportSdkVersion"]}",
+            "recyclerview-v7"       : "com.android.support:recyclerview-v7:${version["androidSupportSdkVersion"]}",
+            "constraint-layout"     : "com.android.support.constraint:constraint-layout:1.1.3",
+
+            "rxjava"                : "io.reactivex.rxjava2:rxjava:2.2.4",
+            "rxpermissions"         : "com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar",
+            "rxlifecycle"           : "com.trello.rxlifecycle2:rxlifecycle:2.2.1",
+            "rxlifecycle-components": "com.trello.rxlifecycle2:rxlifecycle-components:2.2.1",
+            "rxlifecycle-android"   : "com.trello.rxlifecycle2:rxlifecycle-android:2.2.1",
+    ]
+
+}
