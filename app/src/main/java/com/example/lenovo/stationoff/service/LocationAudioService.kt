@@ -404,7 +404,6 @@ class LocationAudioService : Service() {
         }
 
         fun destroy() {
-            cancelLocationNotifi()
             myAMapLocation.mLocationClient.onDestroy()
         }
 
@@ -428,14 +427,14 @@ class LocationAudioService : Service() {
             if (mIat.isListening) {
                 mIat.cancel()
             }
-            //
+            //取消录音
             for (dis in disposes) {
                 if (!dis.isDisposed)
                     dis.dispose()
             }
             disposes.clear()
+            //释放录音
             audioRecorder.release()
-
             //刪除所有的录音文件
             FileUtils.deleteFile("$RECORD_PATH_FILE/wav/")
             FileUtils.deleteFile("$RECORD_PATH_FILE/pcm/")

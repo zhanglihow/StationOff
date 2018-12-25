@@ -216,6 +216,14 @@ class MainActivity : AppCompatActivity(), MainView, LocationAudioService.Service
     }
 
     /**
+     * 显示范围提醒文字
+     */
+    override fun locationOk(str: String) {
+        tv_location.visibility = View.VISIBLE
+        tv_location.text = getString(R.string.location_str, str)
+    }
+
+    /**
      * 到站了
      *
      */
@@ -246,21 +254,16 @@ class MainActivity : AppCompatActivity(), MainView, LocationAudioService.Service
         }
     }
 
+    //重写返回键
     override fun onBackPressed() {
         moveTaskToBack(true)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        mServiceBinder!!.stopAll()
         mServiceBinder!!.destroy()
         unbindService(mConnection)
     }
-
-    override fun locationOk(str: String) {
-        tv_location.visibility = View.VISIBLE
-        tv_location.text = getString(R.string.location_str, str)
-    }
-
-
 }
 
