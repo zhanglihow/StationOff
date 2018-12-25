@@ -214,7 +214,7 @@ class LocationAudioService : Service() {
 
     /**
      * 比较拼音结果
-     * 需要优化 识别到的文字与输入的站名匹配字数 》一半
+     * 需要优化 识别到的文字与输入的站名匹配字数 > 一半
      *          比如：输入站名5位 识别的文字大于等于3 位
      */
     fun contrast(audioPy: ArrayList<String>, stationNames: ArrayList<String>): Boolean {
@@ -223,7 +223,7 @@ class LocationAudioService : Service() {
         val audioPySize = audioPy.size
         //目的地的拼音
         val stationPySize = stationNames.size
-        //目的地的一半 四舍五入
+        //目的地的一半 四舍五入取整
         val halfStation = Math.round(stationPySize / 2.0)
         Logger.e("audioPySize：$audioPySize  stationPySize:$stationPySize  halfStation:$halfStation")
 
@@ -263,7 +263,7 @@ class LocationAudioService : Service() {
     }
 
     /**
-     * 返回定位 和录音的数据
+     * LocationAudioService 和 Activity 绑定后，供 Activity 调用
      */
     inner class ServiceBinder : Binder(), BusStationSearch.OnBusStationSearchListener, DistanceSearch.OnDistanceSearchListener,
             AMapLocationListener, AudioRecorder.RecorderListen {

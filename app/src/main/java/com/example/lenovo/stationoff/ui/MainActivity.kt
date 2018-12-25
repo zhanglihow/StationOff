@@ -57,6 +57,8 @@ class MainActivity : AppCompatActivity(), MainView, LocationAudioService.Service
 
     private var mServiceBinder: LocationAudioService.ServiceBinder? = null
 
+    private var serviceIntent:Intent?=null
+
     private val mConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             mServiceBinder = service as LocationAudioService.ServiceBinder
@@ -86,9 +88,9 @@ class MainActivity : AppCompatActivity(), MainView, LocationAudioService.Service
         initNotification()
 
         //使用服务进行定位和录音
-        val intent = Intent(this@MainActivity, LocationAudioService::class.java)
+        serviceIntent = Intent(this@MainActivity, LocationAudioService::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent)
+            startForegroundService(serviceIntent)
         }
         bindService(intent, mConnection, BIND_AUTO_CREATE)
     }

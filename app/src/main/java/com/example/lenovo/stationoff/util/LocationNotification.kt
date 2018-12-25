@@ -19,7 +19,7 @@ class LocationNotification{
         fun cancelNotification(){
             if(notificationManager!=null)
                 notificationManager!!.cancel(MainActivity.LOCATION_NOTI_ID)
-                notificationManager!!.cancelAll()
+            notificationManager!!.cancelAll()
         }
 
         fun buildNotification(context:Context): Notification? {
